@@ -1,5 +1,5 @@
-import { useTodosContext } from "../pages/TodosProvider";
-import { TodoTile } from "./TodoTile";
+import { useTodosContext } from "../../../pages/TodosProvider";
+import { TodoTile } from "../../molecules/TodoTile";
 
 export const TodoList: React.FC = () => {
   const { todos, deleteTodos } = useTodosContext();
