@@ -7,7 +7,7 @@ type Todo = {
   isDone: boolean;
 };
 
-type TodosContextType = {
+export type TodosContextType = {
   todos: Array<Todo>;
   addTodo: (title: Todo["title"]) => void;
   changeIsDone: (id: Todo["id"], isDone: Todo["isDone"]) => void;
