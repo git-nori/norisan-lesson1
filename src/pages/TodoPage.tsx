@@ -1,35 +1,16 @@
-import { useState } from "react";
 import { TodoList } from "../components";
-import { useTodos } from "../components/hooks";
+import { TodoForm } from "../components/TodoForm";
+import { TodosProvider } from "./TodosProvider";
 
 export const TodoPage: React.FC = () => {
-  const [title, setTitle] = useState("");
-  const { todos, addTodo, changeIsDone, deleteTodo, deleteTodos } = useTodos(
-    []
-  );
-  const onSubmitTodo = () => {
-    addTodo(title);
-    setTitle("");
-  };
-
   return (
-    <>
+    <TodosProvider initialValue={[]}>
       <div>
-        <input
-          type="text"
-          onChange={(e) => setTitle(e.currentTarget.value)}
-          value={title}
-        />
-        <button onClick={onSubmitTodo}>ADD</button>
+        <TodoForm />
       </div>
       <div>
-        <TodoList
-          todos={todos}
-          changeIsDone={changeIsDone}
-          deleteTodo={deleteTodo}
-          deleteTodos={deleteTodos}
-        />
+        <TodoList />
       </div>
-    </>
+    </TodosProvider>
   );
 };

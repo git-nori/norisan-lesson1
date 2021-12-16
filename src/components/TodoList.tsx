@@ -1,30 +1,15 @@
-import { useTodos } from "./hooks";
-import { TodoTile, TodoTileProps } from "./TodoTile";
+import { useTodosContext } from "../pages/TodosProvider";
+import { TodoTile } from "./TodoTile";
 
-export type TodoListProps = {
-  todos: Array<TodoTileProps["todo"]>;
-  changeIsDone: TodoTileProps["changeIsDone"];
-  deleteTodo: TodoTileProps["deleteTodo"];
-  deleteTodos: ReturnType<typeof useTodos>["deleteTodos"];
-};
+export const TodoList: React.FC = () => {
+  const { todos, deleteTodos } = useTodosContext();
 
-export const TodoList: React.FC<TodoListProps> = ({
-  todos,
-  changeIsDone,
-  deleteTodo,
-  deleteTodos,
-}) => {
   return (
     <>
       <table>
         <tbody>
           {todos.map((todo) => (
-            <TodoTile
-              key={todo.id}
-              todo={todo}
-              changeIsDone={changeIsDone}
-              deleteTodo={deleteTodo}
-            />
+            <TodoTile key={todo.id} todo={todo} />
           ))}
         </tbody>
       </table>

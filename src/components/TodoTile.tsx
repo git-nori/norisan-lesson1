@@ -1,16 +1,12 @@
-import { Todo, useTodos } from "./hooks";
+import { useTodosContext } from "../pages/TodosProvider";
 
 export type TodoTileProps = {
-  todo: Todo;
-  changeIsDone: ReturnType<typeof useTodos>["changeIsDone"];
-  deleteTodo: ReturnType<typeof useTodos>["deleteTodo"];
+  todo: ReturnType<typeof useTodosContext>["todos"][number];
 };
 
-export const TodoTile: React.FC<TodoTileProps> = ({
-  todo,
-  changeIsDone,
-  deleteTodo,
-}) => {
+export const TodoTile: React.FC<TodoTileProps> = ({ todo }) => {
+  const { changeIsDone, deleteTodo } = useTodosContext();
+
   return (
     <tr key={todo.id}>
       <td>
