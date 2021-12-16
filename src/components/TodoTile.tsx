@@ -1,13 +1,9 @@
-export type Todo = {
-  id: number;
-  title: string;
-  isDone: boolean;
-};
+import { Todo, useTodos } from "./hooks";
 
 export type TodoTileProps = {
   todo: Todo;
-  changeIsDone: (id: number, checked: boolean) => void;
-  deleteTodo: (id: number) => void;
+  changeIsDone: ReturnType<typeof useTodos>["changeIsDone"];
+  deleteTodo: ReturnType<typeof useTodos>["deleteTodo"];
 };
 
 export const TodoTile: React.FC<TodoTileProps> = ({

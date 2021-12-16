@@ -1,10 +1,11 @@
+import { useTodos } from "./hooks";
 import { TodoTile, TodoTileProps } from "./TodoTile";
 
 export type TodoListProps = {
   todos: Array<TodoTileProps["todo"]>;
   changeIsDone: TodoTileProps["changeIsDone"];
   deleteTodo: TodoTileProps["deleteTodo"];
-  deleteTodos: VoidFunction;
+  deleteTodos: ReturnType<typeof useTodos>["deleteTodos"];
 };
 
 export const TodoList: React.FC<TodoListProps> = ({
