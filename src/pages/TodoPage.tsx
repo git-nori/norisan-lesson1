@@ -2,10 +2,9 @@ import { useState, useEffect } from "react";
 type Task = {
     task: string;
     readonly id: number;
+    //↑文字通り読み取り専用で変更できませんので
 };
-interface Task2 {
-    task: string;
-}
+
 // interface inIdTask {
 //     task: string;
 //     id: number;
@@ -18,6 +17,24 @@ export const TodoPage: React.FC = () => {
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setText(e.target.value);
     };
+    const handleEditChange = (id: number, value: string) => {
+        const deepCopy: Task[] = JSON.parse(JSON.stringify(tasks));
+        // ↑sliceやスプレッド構文はシャローコピーの為、editする関数には不向き。ディープコピーのjsonを使う。ただし、注意が必要
+
+        const newTasks = deepCopy.map((task) => {
+            if (task.id === id) {
+                task.task = value;
+            }
+            return task;
+        });
+        console.log("======tasks=====");
+        tasks.map((task) => console.log(`id:${task.id}, task:${task.task}`)
+        );
+        console.log("========deepcopy======");
+        deepCopy.map((task) => console.log(`id:${task.id}, task:${task.task}`));
+
+        setTasks(newTasks);
+    }
     const addTask = () => {
         if (!text) return;
         const newTask = {
@@ -61,9 +78,8 @@ export const TodoPage: React.FC = () => {
 
                         return (
                             <li key={task.id}>
-                                
-                                <p>{task.task}</p>
-                          </li>
+                                <input type="text" value={task.task} onChange={(e) => handleEditChange(task.id, e.target.value)} />
+                            </li>
                         );
                     })}
                 </ul>
