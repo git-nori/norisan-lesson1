@@ -5,10 +5,14 @@ type Task = {
     //↑文字通り読み取り専用で変更できませんので
 };
 
-// interface inIdTask {
-//     task: string;
-//     id: number;
-// }
+interface Task2 {
+    task: string;
+    id: number;
+}
+
+//↑typeとinterfaceの違いは割とある。宣言か代入なのか。詳しくはメモを見て。
+
+// const sample : string = "サンプル" ⇦ 変数横：型名　のことをアノーテーションという
 
 export const TodoPage: React.FC = () => {
     const [text, setText] = useState("");
