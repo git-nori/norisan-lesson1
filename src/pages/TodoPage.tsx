@@ -5,6 +5,7 @@ type Task = {
     readonly id: number;
     //↑文字通り読み取り専用で変更できませんので
     check: boolean;
+    remove: boolean;
 };
 
 interface Task2 {
@@ -53,12 +54,23 @@ export const TodoPage: React.FC = () => {
         setTasks(newTasks);
 
     }
+    const handleOnRemove = (id: number, remove: boolean) => {
+        const deepCopy: Task[] = JSON.parse(JSON.stringify(tasks));
+        const newTasks = deepCopy.map((task) => {
+            if (task.id === id) {
+                task.remove = !remove;
+            }
+            return task;
+        })
+        setTasks(newTasks);
+    }
     const addTask = () => {
         if (!text) return;
         const newTask = {
             task: text,
             id: new Date().getTime(),
             check: false,
+            remove: false,
         };
         const oldTasks = tasks.slice();
         oldTasks.unshift(newTask);
@@ -97,8 +109,9 @@ export const TodoPage: React.FC = () => {
 
                         return (
                             <li key={task.id}>
-                                <input type="checkbox" checked={task.check} onChange={() => handleOnCheck(task.id, task.check)} />
-                                <input type="text" value={task.task} disabled={task.check} onChange={(e) => handleEditChange(task.id, e.target.value)} />
+                                <input type="checkbox" checked={task.check} disabled={task.remove} onChange={() => handleOnCheck(task.id, task.check)} />
+                                <input type="text" value={task.task} disabled={task.check || task.remove} onChange={(e) => handleEditChange(task.id, e.target.value)} />
+                                <button onClick={() => handleOnRemove(task.id, task.remove)}>{task.remove ? "復元" : "削除"}</button>
                             </li>
                         );
                     })}
