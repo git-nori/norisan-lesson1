@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { checkServerIdentity } from "tls";
 type Task = {
     task: string;
     readonly id: number;
     //↑文字通り読み取り専用で変更できませんので
+    check: boolean;
 };
 
 interface Task2 {
@@ -39,11 +41,24 @@ export const TodoPage: React.FC = () => {
 
         setTasks(newTasks);
     }
+    const handleOnCheck = (id: number, check: boolean) => {
+        const deepCopy: Task[] = JSON.parse(JSON.stringify(tasks));
+        //↑ディープコピーした後の型定義忘れずに
+        const newTasks = deepCopy.map((task) => {
+            if (task.id === id) {
+                task.check = !check
+            }
+            return task;
+        })
+        setTasks(newTasks);
+
+    }
     const addTask = () => {
         if (!text) return;
         const newTask = {
             task: text,
             id: new Date().getTime(),
+            check: false,
         };
         const oldTasks = tasks.slice();
         oldTasks.unshift(newTask);
@@ -82,7 +97,8 @@ export const TodoPage: React.FC = () => {
 
                         return (
                             <li key={task.id}>
-                                <input type="text" value={task.task} onChange={(e) => handleEditChange(task.id, e.target.value)} />
+                                <input type="checkbox" checked={task.check} onChange={() => handleOnCheck(task.id, task.check)} />
+                                <input type="text" value={task.task} disabled={task.check} onChange={(e) => handleEditChange(task.id, e.target.value)} />
                             </li>
                         );
                     })}
