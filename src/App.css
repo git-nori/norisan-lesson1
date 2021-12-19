@@ -1,7 +1,13 @@
 .App {
   text-align: center;
 }
-
+.submit {
+  width: 50px;
+  height: 30px;
+  background-color: aqua;
+  color: #fff;
+  cursor: pointer;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;
