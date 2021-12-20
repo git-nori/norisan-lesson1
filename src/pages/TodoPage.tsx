@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { checkServerIdentity } from "tls";
+import { getAllJSDocTagsOfKind } from "typescript";
 type Task = {
     task: string;
     readonly id: number;
@@ -13,6 +14,8 @@ interface Task2 {
     id: number;
 }
 
+type Filter = "all" | "checked" | "unchecked" | "remove";
+
 //↑typeとinterfaceの違いは割とある。宣言か代入なのか。詳しくはメモを見て。
 
 // const sample : string = "サンプル" ⇦ 変数横：型名　のことをアノーテーションという
@@ -21,6 +24,8 @@ export const TodoPage: React.FC = () => {
     const [text, setText] = useState("");
 
     const [tasks, setTasks] = useState<Task[]>([]);
+
+    const [filter, setFilter] = useState<Filter>('all');
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setText(e.target.value);
     };
@@ -77,11 +82,65 @@ export const TodoPage: React.FC = () => {
         setTasks(oldTasks);
         // setTasks([newTask, ...tasks]); これと同義↑
         setText("");
-
     };
+    const filterTasks = tasks.filter((task) => {
+        switch (filter) {
+          case "all":
+            return !task.remove;
+            // break;
+          //↑削除されてないもの全て
+          case "checked":
+            return task.check && !task.remove;
+            // break;
+          // ↑完了ずみ、かつ、削除されてないもの全て
+          case "unchecked":
+            return !task.check && !task.remove;
+            //↑未完了、かつ、削除されていないもの全て
+            // break;
+          case "remove":
+            return task.remove;
+            // ↑削除されたもの全て
+            // break;
+          default:
+            return task;
+            // break;
+        }
+    });
+    const filterTasks2 = tasks.filter((task) => {
+        if (filter === "all") {
+            console.log("all!");
+
+            return !task.remove;
+        } else if (filter === "checked") {
+          console.log("check!");
+          return task.check && !task.remove;
+        } else if (filter === "unchecked") {
+          console.log("unchecked");
+          return !task.check && !task.remove;
+        } else if (filter === "remove") {
+          console.log("remove");
+
+          return task.remove;
+        } else {
+          console.log("該当なし");
+
+          return task;
+        }
+    });
 
     return (
         <>
+            <div>
+                <select
+                    defaultValue="all"
+                    onChange={(e) => setFilter(e.target.value as Filter)}
+                >
+                    <option value="all">すべてのタスク</option>
+                    <option value="checked">完了したタスク</option>
+                    <option value="unchecked">現在のタスク</option>
+                    <option value="remove">ごみ箱</option>
+                </select>
+            </div>
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
@@ -91,12 +150,14 @@ export const TodoPage: React.FC = () => {
                 <input
                     type="text"
                     value={text}
+                    disabled={filter === "checked" || filter === "remove"}
                     onChange={(e) => handleOnChange(e)}
                 />
                 <input
                     type="submit"
                     value="submit"
                     onSubmit={addTask}
+                    disabled={filter === "checked" || filter === "remove"}
                     className="submit"
                 />
                 <div>
@@ -105,13 +166,24 @@ export const TodoPage: React.FC = () => {
                 </div>
                 <p>現在のTasksの中身↓</p>
                 <ul>
-                    {tasks.map((task) => {
-
+                    {filterTasks2.map((task) => {
                         return (
                             <li key={task.id}>
-                                <input type="checkbox" checked={task.check} disabled={task.remove} onChange={() => handleOnCheck(task.id, task.check)} />
-                                <input type="text" value={task.task} disabled={task.check || task.remove} onChange={(e) => handleEditChange(task.id, e.target.value)} />
-                                <button onClick={() => handleOnRemove(task.id, task.remove)}>{task.remove ? "復元" : "削除"}</button>
+                                <input
+                                    type="checkbox"
+                                    checked={task.check}
+                                    disabled={task.remove}
+                                    onChange={() => handleOnCheck(task.id, task.check)}
+                                />
+                                <input
+                                    type="text"
+                                    value={task.task}
+                                    disabled={task.check || task.remove}
+                                    onChange={(e) => handleEditChange(task.id, e.target.value)}
+                                />
+                                <button onClick={() => handleOnRemove(task.id, task.remove)}>
+                                    {task.remove ? "復元" : "削除"}
+                                </button>
                             </li>
                         );
                     })}
