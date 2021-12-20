@@ -83,26 +83,30 @@ export const TodoPage: React.FC = () => {
         // setTasks([newTask, ...tasks]); これと同義↑
         setText("");
     };
+    const handleOnEmpty = () => {
+        const newTasks = tasks.filter((task) => !task.remove);
+        setTasks(newTasks);
+    }
     const filterTasks = tasks.filter((task) => {
         switch (filter) {
-          case "all":
-            return !task.remove;
+            case "all":
+                return !task.remove;
             // break;
-          //↑削除されてないもの全て
-          case "checked":
-            return task.check && !task.remove;
+            //↑削除されてないもの全て
+            case "checked":
+                return task.check && !task.remove;
             // break;
-          // ↑完了ずみ、かつ、削除されてないもの全て
-          case "unchecked":
-            return !task.check && !task.remove;
+            // ↑完了ずみ、かつ、削除されてないもの全て
+            case "unchecked":
+                return !task.check && !task.remove;
             //↑未完了、かつ、削除されていないもの全て
             // break;
-          case "remove":
-            return task.remove;
+            case "remove":
+                return task.remove;
             // ↑削除されたもの全て
             // break;
-          default:
-            return task;
+            default:
+                return task;
             // break;
         }
     });
@@ -112,83 +116,85 @@ export const TodoPage: React.FC = () => {
 
             return !task.remove;
         } else if (filter === "checked") {
-          console.log("check!");
-          return task.check && !task.remove;
+            console.log("check!");
+            return task.check && !task.remove;
         } else if (filter === "unchecked") {
-          console.log("unchecked");
-          return !task.check && !task.remove;
+            console.log("unchecked");
+            return !task.check && !task.remove;
         } else if (filter === "remove") {
-          console.log("remove");
+            console.log("remove");
 
-          return task.remove;
+            return task.remove;
         } else {
-          console.log("該当なし");
+            console.log("該当なし");
 
-          return task;
+            return task;
         }
     });
 
     return (
         <>
-            <div>
-                <select
-                    defaultValue="all"
-                    onChange={(e) => setFilter(e.target.value as Filter)}
-                >
-                    <option value="all">すべてのタスク</option>
-                    <option value="checked">完了したタスク</option>
-                    <option value="unchecked">現在のタスク</option>
-                    <option value="remove">ごみ箱</option>
-                </select>
-            </div>
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    addTask();
-                }}
+            <select
+                defaultValue="all"
+                onChange={(e) => setFilter(e.target.value as Filter)}
             >
-                <input
-                    type="text"
-                    value={text}
-                    disabled={filter === "checked" || filter === "remove"}
-                    onChange={(e) => handleOnChange(e)}
-                />
-                <input
-                    type="submit"
-                    value="submit"
-                    onSubmit={addTask}
-                    disabled={filter === "checked" || filter === "remove"}
-                    className="submit"
-                />
-                <div>
-                    <p>現在のtext state実況中↓</p>
-                    <p>{text}</p>
-                </div>
-                <p>現在のTasksの中身↓</p>
-                <ul>
-                    {filterTasks2.map((task) => {
-                        return (
-                            <li key={task.id}>
-                                <input
-                                    type="checkbox"
-                                    checked={task.check}
-                                    disabled={task.remove}
-                                    onChange={() => handleOnCheck(task.id, task.check)}
-                                />
-                                <input
-                                    type="text"
-                                    value={task.task}
-                                    disabled={task.check || task.remove}
-                                    onChange={(e) => handleEditChange(task.id, e.target.value)}
-                                />
-                                <button onClick={() => handleOnRemove(task.id, task.remove)}>
-                                    {task.remove ? "復元" : "削除"}
-                                </button>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </form>
+                <option value="all">すべてのタスク</option>
+                <option value="checked">完了したタスク</option>
+                <option value="unchecked">現在のタスク</option>
+                <option value="remove">ごみ箱</option>
+            </select>
+            {filter === "remove" ? (
+                <button onClick={handleOnEmpty} disabled={tasks.filter((task) => task.remove).length === 0}>ゴミ箱を空にする</button>
+            ) : (
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        addTask();
+                    }}
+                >
+                    <input
+                        type="text"
+                        value={text}
+                        disabled={filter === "checked"}
+                        onChange={(e) => handleOnChange(e)}
+                    />
+                    <input
+                        type="submit"
+                        value="submit"
+                        onSubmit={addTask}
+                        disabled={filter === "checked"}
+                        className="submit"
+                    />
+                </form>
+            )}
+            <div>
+                <p>現在のtext state実況中↓</p>
+                <p>{text}</p>
+            </div>
+            <p>現在のTasksの中身↓</p>
+            <ul>
+                {filterTasks2.map((task) => {
+                    return (
+                        <li key={task.id}>
+                            <input
+                                type="checkbox"
+                                checked={task.check}
+                                disabled={task.remove}
+                                onChange={() => handleOnCheck(task.id, task.check)}
+                            />
+                            <input
+                                type="text"
+                                value={task.task}
+                                disabled={task.check || task.remove}
+                                onChange={(e) => handleEditChange(task.id, e.target.value)}
+                            />
+                            <button onClick={() => handleOnRemove(task.id, task.remove)}>
+                                {task.remove ? "復元" : "削除"}
+                            </button>
+                        </li>
+                    );
+                })}
+            </ul>
         </>
     );
 };
